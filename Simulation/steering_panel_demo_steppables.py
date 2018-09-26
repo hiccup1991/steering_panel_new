@@ -9,21 +9,21 @@ class VolumeSteeringSteppable(SteppableBasePy):
     def __init__(self, _simulator, _frequency=10):
         SteppableBasePy.__init__(self, _simulator, _frequency)
 
-    def add_steering_panel(self):
-        self.add_steering_param(name='target_vol', val=25, min_val=0, max_val=100, widget_name='slider')
-        self.add_steering_param(name='lambda_vol', val=2.0, min_val=0, max_val=10.0, decimal_precision=2, widget_name='slider')
-        self.add_steering_param(name='lam_vol_enum', val=2.0, min_val=0, max_val=10.0, decimal_precision=2,widget_name='slider')
+    # def add_steering_panel(self):
+    #     self.add_steering_param(name='target_vol', val=25, min_val=0, max_val=100, widget_name='slider')
+    #     self.add_steering_param(name='lambda_vol', val=2.0, min_val=0, max_val=10.0, decimal_precision=2, widget_name='slider')
+    #     self.add_steering_param(name='lam_vol_enum', val=2.0, min_val=0, max_val=10.0, decimal_precision=2,widget_name='slider')
 
-    def process_steering_panel_data(self):
-        print "VolumeSteeringSteppable: WILL ADJUST PARAMETERS BECAUSE AT LEAST ONE STEERING PARAMETER HAS BEEN CHANGED"
-        print 'all dirty flag=', self.steering_param_dirty()
-        target_vol = self.get_steering_param('target_vol')
-        lambda_vol = self.get_steering_param('lambda_vol')
+    # def process_steering_panel_data(self):
+    #     print "VolumeSteeringSteppable: WILL ADJUST PARAMETERS BECAUSE AT LEAST ONE STEERING PARAMETER HAS BEEN CHANGED"
+    #     print 'all dirty flag=', self.steering_param_dirty()
+    #     target_vol = self.get_steering_param('target_vol')
+    #     lambda_vol = self.get_steering_param('lambda_vol')
 
-        for cell in self.cellList:
+    #     for cell in self.cellList:
 
-            cell.targetVolume = target_vol
-            cell.lambdaVolume = lambda_vol
+    #         cell.targetVolume = target_vol
+    #         cell.lambdaVolume = lambda_vol
 
 
     def start(self):
@@ -32,9 +32,9 @@ class VolumeSteeringSteppable(SteppableBasePy):
             cell.targetVolume = 25
             cell.lambdaVolume = 2.0
 
-    def step(self, mcs):
+    # def step(self, mcs):
 
-        print 'lambda_vol=',self.get_steering_param('lambda_vol')
+    #     print 'lambda_vol=',self.get_steering_param('lambda_vol')
 
 
 
@@ -42,25 +42,25 @@ class SurfaceSteeringSteppable(SteppableBasePy):
     def __init__(self, _simulator, _frequency=10):
         SteppableBasePy.__init__(self, _simulator, _frequency)
 
-    def add_steering_panel(self):
-        #adding slider
-        self.add_steering_param(name='lambda_surface', val=0.2, min_val=0, max_val=10.0, decimal_precision=2,
-                                widget_name='slider')
+    # def add_steering_panel(self):
+    #     #adding slider
+    #     self.add_steering_param(name='lambda_surface', val=0.2, min_val=0, max_val=10.0, decimal_precision=2,
+    #                             widget_name='slider')
 
-        # adding combobox
-        self.add_steering_param(name='target_surface', val=20, enum=[10,20,30,40,50,60,70,80,90,100],
-                                widget_name='combobox')
+    #     # adding combobox
+    #     self.add_steering_param(name='target_surface', val=20, enum=[10,20,30,40,50,60,70,80,90,100],
+    #                             widget_name='combobox')
 
-    def process_steering_panel_data(self):
-        print "SurfaceSteeringSteppable: WILL ADJUST PARAMETERS BECAUSE AT LEAST ONE STEERING PARAMETER HAS BEEN CHANGED"
-        print 'all dirty flag=', self.steering_param_dirty()
-        target_surf = self.get_steering_param('target_surface')
-        lambda_surf = self.get_steering_param('lambda_surface')
+    # def process_steering_panel_data(self):
+    #     print "SurfaceSteeringSteppable: WILL ADJUST PARAMETERS BECAUSE AT LEAST ONE STEERING PARAMETER HAS BEEN CHANGED"
+    #     print 'all dirty flag=', self.steering_param_dirty()
+    #     target_surf = self.get_steering_param('target_surface')
+    #     lambda_surf = self.get_steering_param('lambda_surface')
 
-        for cell in self.cellList:
+    #     for cell in self.cellList:
 
-            cell.targetSurface = target_surf
-            cell.lambdaSurface = lambda_surf
+    #         cell.targetSurface = target_surf
+    #         cell.lambdaSurface = lambda_surf
 
 
     def start(self):
@@ -68,30 +68,39 @@ class SurfaceSteeringSteppable(SteppableBasePy):
             cell.targetSurface = 20
             cell.lambdaSurface = 0.2
 
-    def step(self, mcs):
+    # def step(self, mcs):
 
-        # print 'lam_vol=',self.item_data[1].val
-        print 'lambda_surface=', self.get_steering_param('lambda_surface')
+    #     # print 'lam_vol=',self.item_data[1].val
+    #     print 'lambda_surface=', self.get_steering_param('lambda_surface')
 
 class TemperatureSteeringSteppable(SteppableBasePy):
+    initTemperature = 0.0
+    initInterval = 0.001
     temperature = 0.0
-    interval = 0.0001
-    
+    interval = initInterval
+
     def __init__(self, _simulator, _frequency=10):
         SteppableBasePy.__init__(self, _simulator, _frequency)
+        self.initTemperature = float(self.getXMLElementValue(['Potts'], ['Temperature']))
+        self.temperature = self.initTemperature
 
     def add_steering_panel(self):
-        temperature = float(self.getXMLElementValue(['Potts'], ['Temperature']))
-        self.add_steering_param(name='temperature', val=temperature, min_val=0, max_val=100.0, decimal_precision=2, widget_name='lineedit')
-        self.add_steering_param(name='interval', val=0.001, min_val=0, max_val=1.0, decimal_precision=4, widget_name='lineedit')
+        self.add_steering_param(name='temperature', val=self.initTemperature, min_val=0, max_val=100.0, decimal_precision=2, widget_name='lineedit')
+        self.add_steering_param(name='interval', val=self.initInterval, min_val=0, max_val=1.0, decimal_precision=4, widget_name='lineedit')
         
     def process_steering_panel_data(self):
         print 'TemperatureSteeringSteppable: WILL ADJUST PARAMETERS BECAUSE AT LEAST ONE STEERING PARAMETER HAS BEEN CHANGED'
-        self.temperature = self.get_steering_param('temperature')
-        self.interval = self.get_steering_param('interval')
+        temp = self.get_steering_param('temperature')
+        if temp != self.initTemperature:
+            self.initTemperature = temp
+            self.temperature = temp
+        temp = self.get_steering_param('interval')
+        if temp != self.initInterval:
+            self.initInterval = temp
+            self.interval = temp
     
     def start(self):
-        self.temperature = float(self.getXMLElementValue(['Potts'], ['Temperature']))
+
         for cell in self.cellList:
             cell.fluctAmpl = self.temperature
 
